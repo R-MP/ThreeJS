@@ -88,27 +88,12 @@ function animate() {
     scene.background = bgStart.clone().lerp(bgEnd, bgTransitionProgress);
   }
 
-  if (model && model.position.z < -15) {
-    const moveSpeed = 0.05;
-
-    if (revealSheet.position.z >= -2.25) {
-      revealSheet.position.z -= moveSpeed;
-    }
-  }
-
   controls.update(); // atualiza os controles de órbita
   renderer.render(scene, camera);
 
-  if (revealSheet.position.z == -2.25) {
-    document.getElementById('site-overlay').style.display = 'block';
-  
-    // Para a animação
+  if (model.position.z < -15) {
+    showHtmlOverlay();
     stopAnimation = true;
-  
-    // Limpa tudo depois de 1 segundo
-    setTimeout(() => {
-      disposeScene(scene, renderer);
-    }, 1000);
   }
 }
 
@@ -134,8 +119,22 @@ function disposeScene(scene, renderer) {
 
   if (renderer.domElement && renderer.domElement.parentNode) {
     renderer.domElement.parentNode.removeChild(renderer.domElement);
-  }
-  
+  } 
 }
+
+function showHtmlOverlay() {
+  const overlay = document.getElementById('site-overlay');
+
+  overlay.classList.add('visible'); // ativa o fade e visibilidade
+
+  // Fade-out do canvas
+  renderer.domElement.style.transition = 'opacity 1s ease';
+  renderer.domElement.style.opacity = '0';
+
+  setTimeout(() => {
+    disposeScene(scene, renderer);
+  }, 1000);
+}
+
 
 animate();
